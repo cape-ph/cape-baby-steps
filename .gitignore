@@ -1,0 +1,41 @@
+# OS
+# ===========
+.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# General
+# =======
+*.log
+*.dat
+*.out
+*.pid
+*.gz
+*.tmp
+*.bak
+*.swp
+*.csv#
+logs/
+build/
+
+# IDEs
+# ====
+*.iml
+*.idea
+.vscode
+*.code-workspace
+
+# Vagrant/Ansible/CI related
+# ==========================
+.vagrant
+playbook.retry
+.vault
+ansible.out
+
+# Other
+# =====
+sslcerts.pfx
+scripts/*gz
+__pycache__/
+*.py[cod]
