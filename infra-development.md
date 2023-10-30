@@ -64,13 +64,102 @@ section in particular has a lot of good content.
   YML makes it superior for things humans have to do (json wins for machine to 
   machine interop)
 * **HOW WILL WE HANDLE CM AND VERSIONING? WHAT DOES VERSIOINING MEAN IN AN AWS DEPLOYMENT ENVIRONMENT???**
+* It is almost certain we will need to share values between stacks (e.g., ip 
+  addrs, service ids, etc). there are a few ways to handle this and they all 
+  have pros/cons. They are listed below, but tl;dr is that we may want to start
+  with the SSM Parameter Store. All the below assumes we're pretty much using
+  nested stacks under a top level main stack.
+  * copy/paste all the things - i think this is a non-starter, but it is an 
+    option. take service ids as the example, once an id is deployed and has an
+    id, we copy it and paste it where we need it next. this will become 
+    crazypants quickly and things will break when someone forgets to C/P 
+    somewhere in the bowels of a not oft used service.
+  * stack outputs and stack parameters - define outputs for substacks and then 
+    reference those outputs in the parameters for other substacks. seems 
+    perfectly valid but adds some nuance in nested stack land. e.g., if a 
+    substack using an output from another fails to deploy, both stacks are 
+    rolled back. also as far as i can tell lacks good support for secret values.
+  * export/import - stacks can export and import values maintained per region 
+    in aws for an account. so one substack can export a value, then anything 
+    else in that account and region can import that value and use it. also seems
+    legit, but has the drawback that exports are immutable and versioned. so if
+    a value changes, other substacks have to be modified to grab a new version 
+    and then be redeployed. so if things change a lit, this gets harder to 
+    manage.
+  * AWS System Manager Parameter Store - essentially a key/value store that 
+    exists outside stacks. this can handle secrets. templates are coded to grab 
+    the current value from the store. seems pretty simple and flexible. for 
+    `standard` paremeters (params < 4kb, up to 10000 of them), there is no 
+    charge. for `advanced` params (4kb - 8kb), there is a monthly charge per 
+    param (currently $0.05 per param per month). the 10000 cap is per account, 
+    so if the customer has a ton of params already, we could be racking up a 
+    charge for what would normally be a standard param.
 
 ### Repos
 * we'll want one main repo for infra for sure to start. may want to go the route
-  of a repo per stack down the road.
+  of a repo per stack down the road. but if we go pure nested, then we can still
+  maintain one repo
 * may want additional repos for reusable parts (template snippets or modules 
   maybe? not sure yet)
 * probably a repo per lambda function or similar things
+
+### Stack Repo Layout
+This is just an initial proposal. We could go with it and refactor later if 
+needed, or this could be shot down from the start. 
+
+This proposal assumes we're going to want the infra as a whole all the time 
+(never deploying just a piece for any given customer). Note this does not mean
+that we would never deploy just a piece when we already have the whole deployed
+as a start (imagine an update that only affects one substack, we wouldn't deploy
+the entire thing again, just the update...but that would be managed for us, we 
+would still do the deploy as though we were deploying the whole things). As 
+such, there is one repo for all the stacks.
+
+There is a main stack template that is the root for all the others. Substacks
+are divided up by access scopes (think VPCs) and then those are further divided
+by plumbing and porcelain (following the git pattern). Plumbing are things 
+behind the scenes that need to exist before porcelain can be used (e.g., IAM
+setup, VPCs, security or network setup, etc.) while porcelain includes things
+like the services users will interact with (explicitly or implicitly).
+
+***NOTE:*** In the repo layout below, no `.yml` files are definite except for 
+the `cape-infra.yml` top-level stack. All the others are just provided for 
+example's sake.
+
+```
+repo-root/
+  substacks/
+    private/
+      plumbing/
+        vpc.yml
+        security-groups.yml
+        network.yml
+        ...
+      porcelain/
+        storage.yml
+        data-transfer.yml
+        data-lakehouse.yml
+        ...
+    protected/
+      plumbing/
+        vpc.yml
+        security-groups.yml
+        network.yml
+        ...
+      porcelain/
+        data-sets.yml
+        api.yml
+    public/
+      plumbing/
+        vpc.yml
+        security-groups.yml
+        network.yml
+        ...
+      porcelain/
+        dashboards.yml
+  cape-infra.yml
+  README.md
+```
 
 ### CI/CD
 * for sure, we'll want the `cfn-lint` pre-commit hook (though again, peeps 
