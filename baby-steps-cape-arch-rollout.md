@@ -1,7 +1,5 @@
 # Baby Steps CAPE Arch Rollout
 
-**THIS NEEDS TO BE MOVED SOMEWHERE USEFUL (NOT BOX)**
-
 This is a proposed set pf phases for rolling out the CAPE architecture we have 
 proposed. **NOTE** this doesn't necessarily end in the actual system, but gets 
 us experience in all the moving parts to build a toy system for demonstration 

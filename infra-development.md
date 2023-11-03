@@ -1,8 +1,6 @@
 # CAPE Infra Development
 
 **WIP: THIS COULD CHANGE ANYTIME**
-**THIS NEEDS TO BE MOVED SOMEWHERE USEFUL (NOT BOX)**
-
 
 Much of this came out of reading the 
 [CF user manual](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide)
