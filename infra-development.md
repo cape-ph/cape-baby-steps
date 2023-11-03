@@ -40,8 +40,6 @@ section in particular has a lot of good content.
   to see how we can use these reusable things. Third-party resource types may be 
   publicly available that we can use for some things. [See here for examples.](https://aws.amazon.com/blogs/aws/introducing-a-public-registry-for-aws-cloudformation/)
 
-
-
 ## Process
 
 ### Conventions
@@ -206,6 +204,16 @@ repo-root/
 
 
 ## Arch Considerations
+* There are things we will require outside of stack definitions in this repo:
+  * An IAM user to actually deploy the stack (e.g. a deployment user). This 
+    could end up being multiple users or one or more groups. Unknown at this 
+    point
+  * One or more S3 buckets for deployments. With CF, if you manage your 
+    templates outside AWS land (like we are in GH), they need to end up in an 
+    S3 bucket to be deployed. This should not be part of any S3 exposed to the 
+    system as a whole, and is just for the deployment scenario.
+  * Whatever we're going to use to manage certs/keys and secret management. 
+  * ***More TBD***
 * this system will have a ton of moving parts. we need to be really careful 
   about versions of things staying in sync between all of our environments. e.g.
   if we have an integration EC2 instance that has been `yum update`d a bunch
