@@ -30,7 +30,7 @@ Description: >
    # [TBD] 
 
 Resources:
-  ProtectedPartnerUser:
+  CAPEBSProtectedPartnerUser:
     Type: AWS::IAM::User
     Properties:
       #Groups: 
