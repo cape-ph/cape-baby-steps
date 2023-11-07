@@ -1,0 +1,69 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+   IAM stack template for the private substack. To start we have an admin (for
+   CAPE, not for AWS) user and a regular user. This is to test access to various
+   private phase 1 baby step resources.
+   This template and other nested sub-stack templates are used to deploy an 
+   example architecture to get some experience with these things under our 
+   belts. In all templates, things we do not know yet that need to be filled in
+   eventually are noted with `[TBD]`. Items that are commented out are either 
+   not known or not needed. These will be cleaned up as we go.
+
+#Metadata:
+   # [TBD] 
+ 
+#Parameters:
+   # [TBD] 
+
+#Rules:
+   # [TBD] 
+
+#Mappings:
+   # [TBD] 
+
+#Conditions:
+   # [TBD] 
+
+#Transform:
+   # [TBD] 
+
+Resources:
+  PrivateAdminUser:
+    Type: AWS::IAM::User
+    Properties:
+      #Groups: 
+      #  - [TBD]
+      LoginProfile: 
+        Password: "b4dp4ssw0rd"
+        PasswordResetRequired: True
+      #ManagedPolicyArns: 
+      #  - [TBD]
+      #Path: String
+      #PermissionsBoundary: [TBD]
+      #Policies: 
+      #  - [TBD]
+      #Tags: 
+      #  - [TBD]
+      UserName: "cape_private_admin"
+
+  PrivateRegularUser:
+    Type: AWS::IAM::User
+    Properties:
+      #Groups: 
+      #  - [TBD]
+      LoginProfile: 
+        Password: "b4dp4ssw0rd"
+        PasswordResetRequired: True
+      #ManagedPolicyArns: 
+      #  - [TBD]
+      #Path: String
+      #PermissionsBoundary: [TBD]
+      #Policies: 
+      #  - [TBD]
+      #Tags: 
+      #  - [TBD]
+      UserName: "cape_private_unpriv"
+#Outputs:
+   # [TBD] 
