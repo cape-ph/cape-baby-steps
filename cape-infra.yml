@@ -1,0 +1,68 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+   Top-level CloudFormation template for CAPE infrastructure baby-steps repo.
+   This template and other nested sub-stack templates are used to deploy an 
+   example architecture to get some experience with these things under our 
+   belts. In all templates, things we do not know yet that need to be filled in
+   eventually are noted with `[TBD]`. Items that are commented out are either 
+   not known or not needed. These will be cleaned up as we go.
+
+#Metadata:
+   # [TBD] 
+ 
+#Parameters:
+   # [TBD] 
+
+#Rules:
+   # [TBD] 
+
+#Mappings:
+   # [TBD] 
+
+#Conditions:
+   # [TBD] 
+
+#Transform:
+   # [TBD] 
+
+Resources:
+   ProtectedStack:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        Capabilities:
+            # this stack creates a protected named user and this capability is 
+            # required
+          - CAPABILITY_NAMED_IAM
+        #ChangeSetId: String
+        #CreationTime: String
+        Description: >
+            Nested stack for the protected side of CAPE. Creates resources 
+            usable by GDPH and partners.
+        #DisableRollback: Boolean
+        EnableTerminationProtection: True
+        #LastUpdateTime: String
+        #NotificationARNs: 
+        #  - String
+        #Outputs: 
+        #  - Output
+        #Parameters: 
+        #  Key: [TBD]
+        #ParentId: String
+        #RoleARN: [TBD]
+        #RootId: String
+        #StackId: String
+        StackName: "cape-babysteps-protected-stack"
+        #StackPolicyBody: Json
+        #StackPolicyURL: String
+        #StackStatus: String
+        #StackStatusReason: String
+        #Tags: 
+        #  - [TBD]
+        #TemplateBody: Json
+        TemplateURL: substacks/protected/cape-infra-protected.yml
+        #TimeoutInMinutes: Integer
+
+#Outputs:
+   # [TBD] 

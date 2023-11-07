@@ -1,0 +1,52 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+   IAM stack template for the protected substack. To start we only have a 
+   single protected user and it is setup to not have any access to any of the
+   phase 1 baby step resources.
+   This template and other nested sub-stack templates are used to deploy an 
+   example architecture to get some experience with these things under our 
+   belts. In all templates, things we do not know yet that need to be filled in
+   eventually are noted with `[TBD]`. Items that are commented out are either 
+   not known or not needed. These will be cleaned up as we go.
+
+#Metadata:
+   # [TBD] 
+ 
+#Parameters:
+   # [TBD] 
+
+#Rules:
+   # [TBD] 
+
+#Mappings:
+   # [TBD] 
+
+#Conditions:
+   # [TBD] 
+
+#Transform:
+   # [TBD] 
+
+Resources:
+  ProtectedPartnerUser:
+    Type: AWS::IAM::User
+    Properties:
+      #Groups: 
+      #  - [TBD]
+      LoginProfile: 
+        Password: "b4dp4ssw0rd"
+        PasswordResetRequired: True
+      #ManagedPolicyArns: 
+      #  - [TBD]
+      #Path: String
+      #PermissionsBoundary: [TBD]
+      #Policies: 
+      #  - [TBD]
+      #Tags: 
+      #  - [TBD]
+      UserName: "cape_protected_partner"
+
+#Outputs:
+   # [TBD] 
