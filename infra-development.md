@@ -125,6 +125,15 @@ example's sake.
 ```
 repo-root/
   substacks/
+    common/
+      plumbing/
+        load-balancer.yml
+        vpc-peering.yml
+        ...
+      porcelain/
+        container-registry.yml
+        data-transfer.yml
+        ...
     private/
       plumbing/
         vpc.yml
