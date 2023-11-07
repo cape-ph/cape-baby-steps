@@ -30,7 +30,7 @@ Description: >
    # [TBD] 
 
 Resources:
-  PrivateAdminUser:
+  CAPEBSPrivateAdminUser:
     Type: AWS::IAM::User
     Properties:
       #Groups: 
@@ -48,7 +48,7 @@ Resources:
       #  - [TBD]
       UserName: "cape_private_admin"
 
-  PrivateRegularUser:
+  CAPEBSPrivateRegularUser:
     Type: AWS::IAM::User
     Properties:
       #Groups: 
@@ -65,5 +65,6 @@ Resources:
       #Tags: 
       #  - [TBD]
       UserName: "cape_private_unpriv"
+
 #Outputs:
    # [TBD] 
