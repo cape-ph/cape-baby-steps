@@ -28,41 +28,76 @@ Description: >
    # [TBD] 
 
 Resources:
-   ProtectedStack:
-      Type: AWS::CloudFormation::Stack
-      Properties:
-        Capabilities:
-            # this stack creates a protected named user and this capability is 
-            # required
-          - CAPABILITY_NAMED_IAM
-        #ChangeSetId: String
-        #CreationTime: String
-        Description: >
-            Nested stack for the protected side of CAPE. Creates resources 
-            usable by GDPH and partners.
-        #DisableRollback: Boolean
-        EnableTerminationProtection: True
-        #LastUpdateTime: String
-        #NotificationARNs: 
-        #  - String
-        #Outputs: 
-        #  - Output
-        #Parameters: 
-        #  Key: [TBD]
-        #ParentId: String
-        #RoleARN: [TBD]
-        #RootId: String
-        #StackId: String
-        StackName: "cape-babysteps-protected-stack"
-        #StackPolicyBody: Json
-        #StackPolicyURL: String
-        #StackStatus: String
-        #StackStatusReason: String
-        #Tags: 
-        #  - [TBD]
-        #TemplateBody: Json
-        TemplateURL: substacks/protected/cape-infra-protected.yml
-        #TimeoutInMinutes: Integer
+  CAPEBSProtectedStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Capabilities:
+        # this stack creates a protected named user and this capability is 
+        # required
+        - CAPABILITY_NAMED_IAM
+      #ChangeSetId: String
+      #CreationTime: String
+      Description: >
+        Nested stack for the protected side of CAPE. Creates resources 
+        usable by GDPH and partners.
+      #DisableRollback: Boolean
+      EnableTerminationProtection: True
+      #LastUpdateTime: String
+      #NotificationARNs: 
+      #  - String
+      #Outputs: 
+      #  - Output
+      #Parameters: 
+      #  Key: [TBD]
+      #ParentId: String
+      #RoleARN: [TBD]
+      #RootId: String
+      #StackId: String
+      StackName: "cape-babysteps-protected-stack"
+      #StackPolicyBody: Json
+      #StackPolicyURL: String
+      #StackStatus: String
+      #StackStatusReason: String
+      #Tags: 
+      #  - [TBD]
+      #TemplateBody: Json
+      TemplateURL: substacks/protected/cape-infra-protected.yml
+      #TimeoutInMinutes: Integer
 
+  CAPEBSPrivateStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Capabilities:
+        # this stack creates a protected named user and this capability is 
+        # required
+        - CAPABILITY_NAMED_IAM
+      #ChangeSetId: String
+      #CreationTime: String
+      Description: >
+        Nested stack for the private side of CAPE. Creates resources 
+        usable by GDPH and partners.
+      #DisableRollback: Boolean
+      EnableTerminationProtection: True
+      #LastUpdateTime: String
+      #NotificationARNs: 
+      #  - String
+      #Outputs: 
+      #  - Output
+      #Parameters: 
+      #  Key: [TBD]
+      #ParentId: String
+      #RoleARN: [TBD]
+      #RootId: String
+      #StackId: String
+      StackName: "cape-babysteps-private-stack"
+      #StackPolicyBody: Json
+      #StackPolicyURL: String
+      #StackStatus: String
+      #StackStatusReason: String
+      #Tags: 
+      #  - [TBD]
+      #TemplateBody: Json
+      TemplateURL: substacks/private/cape-infra-private.yml
+      #TimeoutInMinutes: Integer
 #Outputs:
    # [TBD] 
