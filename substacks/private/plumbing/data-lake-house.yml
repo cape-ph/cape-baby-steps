@@ -1,0 +1,160 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+   Data lakehouse stack template for the private substack. To start we have only
+   2 S3 buckets (raw and curated). This will eventually grow to contain more
+   buckets, metastore, etc.
+   This template and other nested sub-stack templates are used to deploy an 
+   example architecture to get some experience with these things under our 
+   belts. In all templates, things we do not know yet that need to be filled in
+   eventually are noted with `[TBD]`. Items that are commented out are either 
+   not known or not needed. These will be cleaned up as we go.
+
+#Metadata:
+   # [TBD] 
+ 
+#Parameters:
+   # [TBD] 
+
+#Rules:
+   # [TBD] 
+
+#Mappings:
+   # [TBD] 
+
+#Conditions:
+   # [TBD] 
+
+#Transform:
+   # [TBD] 
+
+Resources:
+  CAPEBSPrivateDLRawS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      #AccelerateConfiguration:  AccelerateConfiguration
+      # AWS docs state access control is legacy and should not be used. see 
+      # https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html
+      # for more modern ways to do this
+      #AccessControl: String
+      #AnalyticsConfigurations: 
+      #  - AnalyticsConfiguration
+      # We will probably want encryption on everything unless that messes with
+      # any DLH (data lake house) queries or other parts of the system we 
+      # envision.
+      #BucketEncryption: BucketEncryption
+      BucketName: "capebs-private-dlh-raw-bucket"
+      # We will probably not want CORS for our DLH buckets. Since this is all 
+      # private, everything should be same origin i would think.
+      #CorsConfiguration: CorsConfiguration
+      # We may want intelligent tiering long term (again, unless that messes
+      # with queries/other functions *or* if customer does not want to pay for 
+      # it and rather handle it themselves)
+      #IntelligentTieringConfigurations: 
+      #  - [TBD]
+      #InventoryConfigurations: 
+      #  - InventoryConfiguration
+      # This goes hand in hand with (and also independently of WRT expiration)
+      # IntelliigentTiering. May or may not want here
+      #LifecycleConfiguration: [TBD]
+      # Not really sure how we'll want to handle logging config for cape. Need
+      # to check with GDPH and see what they do currently. It seems like having
+      # a centralized location for all logs would be a good idea?
+      #LoggingConfiguration: [TBD]
+      #MetricsConfigurations: 
+      #  - MetricsConfiguration
+      # Not sure if we'll need notifications. Even if we do, maybe not for 
+      # upload of raw data or on transforms leading to curated
+      #NotificationConfiguration: NotificationConfiguration
+      # ObjectLock* may or may not be useful. If we have anything that cannot be
+      # modified once uploaded (indefinitely or for some period of time), then 
+      # it would be useful.
+      #ObjectLockConfiguration: ObjectLockConfiguration
+      #ObjectLockEnabled: Boolean
+      # Not sure how we want to handle this. Should the file writer be the 
+      # owner, or should it become the bucket owner after upload? Probably 
+      # bucket owner. In any event, we will need to figure out our access 
+      # controls for the bucket before worrying about this.
+      #OwnershipControls: OwnershipControls
+      # We do not want any of these buckets to be public. So we need to make 
+      # sure the access control doesn't allow that. Not clear yet if these 
+      # settings are needed if the access control is correct for the bucket 
+      # already
+      #PublicAccessBlockConfiguration: PublicAccessBlockConfiguration
+      # Unsure if we will need to replicate any of our buckets...
+      #ReplicationConfiguration: ReplicationConfiguration
+      #Tags: 
+      #  - [TBD]
+      # Pretty certain we want versioning on for all our buckets to allow files
+      # to be updated. Def need to verify
+      VersioningConfiguration: 
+        Status: "Enabled"
+      # This is used if the bucket is for a static website. Ours is not...
+      #WebsiteConfiguration: WebsiteConfiguration
+
+  CAPEBSPrivateDLCuratedS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      #AccelerateConfiguration:  AccelerateConfiguration
+      # AWS docs state access control is legacy and should not be used. see 
+      # https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html
+      # for more modern ways to do this
+      #AccessControl: String
+      #AnalyticsConfigurations: 
+      #  - AnalyticsConfiguration
+      # We will probably want encryption on everything unless that messes with
+      # any DLH (data lake house) queries or other parts of the system we 
+      # envision.
+      #BucketEncryption: BucketEncryption
+      BucketName: "capebs-private-dlh-curated-bucket"
+      # We will probably not want CORS for our DLH buckets. Since this is all 
+      # private, everything should be same origin i would think.
+      #CorsConfiguration: CorsConfiguration
+      # We may want intelligent tiering long term (again, unless that messes
+      # with queries/other functions *or* if customer does not want to pay for 
+      # it and rather handle it themselves)
+      #IntelligentTieringConfigurations: 
+      #  - [TBD]
+      #InventoryConfigurations: 
+      #  - InventoryConfiguration
+      # This goes hand in hand with (and also independently of WRT expiration)
+      # IntelliigentTiering. May or may not want here
+      #LifecycleConfiguration: [TBD]
+      # Not really sure how we'll want to handle logging config for cape. Need
+      # to check with GDPH and see what they do currently. It seems like having
+      # a centralized location for all logs would be a good idea?
+      #LoggingConfiguration: [TBD]
+      #MetricsConfigurations: 
+      #  - MetricsConfiguration
+      # Not sure if we'll need notifications. Even if we do, maybe not for 
+      # upload of raw data or on transforms leading to curated
+      #NotificationConfiguration: NotificationConfiguration
+      # ObjectLock* may or may not be useful. If we have anything that cannot be
+      # modified once uploaded (indefinitely or for some period of time), then 
+      # it would be useful.
+      #ObjectLockConfiguration: ObjectLockConfiguration
+      #ObjectLockEnabled: Boolean
+      # Not sure how we want to handle this. Should the file writer be the 
+      # owner, or should it become the bucket owner after upload? Probably 
+      # bucket owner. In any event, we will need to figure out our access 
+      # controls for the bucket before worrying about this.
+      #OwnershipControls: OwnershipControls
+      # We do not want any of these buckets to be public. So we need to make 
+      # sure the access control doesn't allow that. Not clear yet if these 
+      # settings are needed if the access control is correct for the bucket 
+      # already
+      #PublicAccessBlockConfiguration: PublicAccessBlockConfiguration
+      # Unsure if we will need to replicate any of our buckets...
+      #ReplicationConfiguration: ReplicationConfiguration
+      #Tags: 
+      #  - [TBD]
+      # Pretty certain we want versioning on for all our buckets to allow files
+      # to be updated. Def need to verify
+      VersioningConfiguration: 
+        Status: "Enabled"
+      # This is used if the bucket is for a static website. Ours is not...
+      #WebsiteConfiguration: WebsiteConfiguration
+
+#Outputs:
+   # [TBD] 
