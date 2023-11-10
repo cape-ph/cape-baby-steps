@@ -54,6 +54,8 @@ Resources:
       #Groups: 
       #  - [TBD]
       LoginProfile: 
+        # We need to get the passwords out and into a secret manager or 
+        # something.
         Password: "b4dp4ssw0rd"
         PasswordResetRequired: True
       #ManagedPolicyArns: 
