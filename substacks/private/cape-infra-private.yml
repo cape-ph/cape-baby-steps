@@ -29,7 +29,7 @@ Description: >
    # [TBD] 
 
 Resources:
-  CAPEBSPrivateStack:
+  CAPEBSPrivateIAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Capabilities:
@@ -62,6 +62,39 @@ Resources:
       #  - [TBD]
       #TemplateBody: Json
       TemplateURL: plumbing/iam.yml
+      #TimeoutInMinutes: Integer
+
+  CAPEBSPrivateDLHStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+        #Capabilities:
+      #ChangeSetId: String
+      #CreationTime: String
+      Description: >
+        The private data lake house nested stack. Creates S3 buckets and 
+        transforms.
+      #DisableRollback: Boolean
+      EnableTerminationProtection: True
+      #LastUpdateTime: String
+      #NotificationARNs: 
+      #  - String
+      #Outputs: 
+      #  - Output
+      #Parameters: 
+      #  Key: [TBD]
+      #ParentId: String
+      #RoleARN: [TBD]
+      #RootId: String
+      #StackId: String
+      StackName: "cape-babysteps-private-dlh-stack"
+      #StackPolicyBody: Json
+      #StackPolicyURL: String
+      #StackStatus: String
+      #StackStatusReason: String
+      #Tags: 
+      #  - [TBD]
+      #TemplateBody: Json
+      TemplateURL: plumbing/data-lake-house.yml
       #TimeoutInMinutes: Integer
 
   CAPEBSPrivateVPC:
