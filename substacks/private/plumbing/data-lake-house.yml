@@ -1,6 +1,16 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 
+# TODO:
+# - get reused items parameterized (e.g bucket names, etc)
+# - setup simple labmda to handle the csv xform (be sure to handle exceptions
+#   like file not being valid, etc). exception handling in AWS isn't super
+#   straight forward (if the csv was misformed, the lambda should just exit
+#   logging the issue, but if the getting/putting of the raaw/transformed csv
+#   fails, the lambda should be retried somehow and these are handled
+#   differently). For this excercise, we may just want to log errors for bad raw
+#   format.
+
 Description: >
    Data lakehouse stack template for the private substack. To start we have only
    2 S3 buckets (raw and curated). This will eventually grow to contain more
@@ -14,8 +24,16 @@ Description: >
 #Metadata:
    # [TBD] 
  
-#Parameters:
-   # [TBD] 
+Parameters:
+  CAPEBSRawBucketName:
+    Type: String
+    Default: capebs-private-dlh-raw-bucket
+    Description: Name for the raw bucket for CSV upload
+
+  CAPEBSCuratedBucketName:
+    Type: String
+    Default: capebs-private-dlh-curated-bucket
+    Description: Name for the curated bucket for CSV upload
 
 #Rules:
    # [TBD] 
@@ -32,6 +50,10 @@ Description: >
 Resources:
   CAPEBSPrivateDLRawS3:
     Type: AWS::S3::Bucket
+    DependsOn:
+      # Depends on this permission being setup correctly before the bucket can
+      # be made. Permission needed to trigger Lambda an csv upload
+      - CAPEBSLambdaXformPermission
     Properties:
       #AccelerateConfiguration:  AccelerateConfiguration
       # AWS docs state access control is legacy and should not be used. see 
@@ -44,7 +66,7 @@ Resources:
       # any DLH (data lake house) queries or other parts of the system we 
       # envision.
       #BucketEncryption: BucketEncryption
-      BucketName: "capebs-private-dlh-raw-bucket"
+      BucketName: !Ref CAPEBSRawBucketName
       # We will probably not want CORS for our DLH buckets. Since this is all 
       # private, everything should be same origin i would think.
       #CorsConfiguration: CorsConfiguration
@@ -64,9 +86,17 @@ Resources:
       #LoggingConfiguration: [TBD]
       #MetricsConfigurations: 
       #  - MetricsConfiguration
-      # Not sure if we'll need notifications. Even if we do, maybe not for 
-      # upload of raw data or on transforms leading to curated
-      #NotificationConfiguration: NotificationConfiguration
+      # This handles the triggering of the lambda on CSV upload to the raw
+      # bucket
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt CAPEBSLambdaXformFunction
+            Filter:
+              S3Key:
+                Rules:
+                - Name: suffix
+                  Value: .csv
       # ObjectLock* may or may not be useful. If we have anything that cannot be
       # modified once uploaded (indefinitely or for some period of time), then 
       # it would be useful.
@@ -95,6 +125,11 @@ Resources:
 
   CAPEBSPrivateDLCuratedS3:
     Type: AWS::S3::Bucket
+    DependsOn:
+      # Depends on this permission being setup correctly before the bucket can
+      # be made. Permission needed for the Lambda to upload transformed csv into
+      # the cureated bucket
+      - CAPEBSLambdaXformPermission
     Properties:
       #AccelerateConfiguration:  AccelerateConfiguration
       # AWS docs state access control is legacy and should not be used. see 
@@ -107,7 +142,7 @@ Resources:
       # any DLH (data lake house) queries or other parts of the system we 
       # envision.
       #BucketEncryption: BucketEncryption
-      BucketName: "capebs-private-dlh-curated-bucket"
+      BucketName: !Ref CAPEBSCuratedBucketName
       # We will probably not want CORS for our DLH buckets. Since this is all 
       # private, everything should be same origin i would think.
       #CorsConfiguration: CorsConfiguration
@@ -155,6 +190,161 @@ Resources:
         Status: "Enabled"
       # This is used if the bucket is for a static website. Ours is not...
       #WebsiteConfiguration: WebsiteConfiguration
+
+  # Permission resource for the Lambda transform
+  CAPEBSLambdaXformPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref CAPEBSLambdaXformFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Sub 'arn:aws:s3:::${CAPEBSRawBucketName}'
+      SourceAccount: !Ref AWS::AccountId
+
+  # Role for the Lambda. Allows read of objects in the raw bucket and putting
+  # of objects in the curated bucket
+  CAPEBSLambdaXformExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        # we'll probably want logging setup at some point, here's an example
+        #- PolicyName: allowLogging
+        #  PolicyDocument:
+        #    Version: '2012-10-17'
+        #    Statement:
+        #    - Effect: Allow
+        #      Action:
+        #      - logs:*
+        #      Resource: arn:aws:logs:*:*:*
+        - PolicyName: getRawObjects
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - s3:GetObject
+              Resource:  !Sub 'arn:aws:s3:::${CAPEBSRawBucketName}/*'
+
+        - PolicyName: putRawObjects
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - s3:PutObject
+              Resource:  !Sub 'arn:aws:s3:::${CAPEBSCuratedBucketName}/*'
+
+  CAPEBSLambdaXformFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+          # NOTE: doing this lambda as inline python. for this trivial example
+          #       that's fine, but we should really get into making repos for
+          #       these things. if not doing inline, `Code` will get handed a
+          #       URL for a zip file deployment (or a container image) of the
+          #       lambda and we can get all CI/CD up in the repos to make the
+          #       zips (like releases)
+        ZipFile: >
+          import csv
+          import io
+          import urllib.parse
+          import re
+          import boto3
+
+          def csv_xform_lambda_handler(event, context):
+              """Trivial Lambda function that transforms a csv column header if needed.
+
+              NOTE: we are not handling bad stuff now. like
+              - if the file isn't actually a csv
+              - if it has no header row
+              - if the csv has multiple columns with the same header (this is actually
+                handled the way this is implemented)
+              - errors getting the raw file or writing the transformed file (which should
+                cause a re-run of the lambda)
+              - file being transformed more than once (upload of same file more than once)
+              - etc
+
+              :param event: The event that triggered this function
+              :param context: Context for the function. Probably will not use.
+              """
+              # this will end up with the contents for the xformed csv
+              xformed_csv_data = []
+
+              # the bucket in which we will place the xformed file
+              curated_bucket = "capebs-private-dlh-curated-bucket"
+
+              # name of the bucket where the upload happened to trigger this lambda.
+              # NOTE: we *could* error check this if we want as this should be the value
+              #       "capebs-private-dlh-raw-bucket" in this trivial example. but if AWS
+              # is doing the right thing, that's the only value we should get
+              raw_bucket = event['Records'][0]['s3']['bucket']['name']
+
+              # get the name of the file that was uploaded to cause this function to run
+              key = urllib.parse.unquote_plus(
+                  event['Records'][0]['s3']['object']['key'],
+                  encoding='utf-8'
+              )
+
+              try:
+                  response = s3.get_object(Bucket=raw_bucket, Key=key)
+
+                  with open("test.csv") as csvfile:
+                      csvrdr = csv.reader(csvfile)
+
+                      # get the current cav headers
+                      headers = next(csvrdr)
+
+                      # replace "Date of Birth" (ignore case) with "DOB". if the value is
+                      # not found, then the file will go into curated as is. save this
+                      # xform as the 1st row (headers) in xformed_csv_data
+                      xformed_csv_data.append(
+                          list(
+                              map(lambda x: re.sub("(?i)date of birth", "DOB", x),
+                              headers)
+                          )
+                      )
+
+                      # now get the data rows into xformed_csv_data
+                      for row in csvrdr:
+                          xformed_csv_data.append(row)
+
+                  # write the xformed contents to a StringIO object (S3 wants this) and
+                  # put that in the curated bucket
+                  with io.StringIO() as xformed_obj_file:
+                      csvwriter = csv.writer(xformed_obj_file)
+                      for row in xformed_csv_data:
+                          csvwriter.writerow(item)
+
+                      s3.put_object(
+                          Body=xformed_obj_file.get_value(),
+                          Bucket=curated_bucket,
+                          Key=f"transformed-{key}"
+                      )
+
+              except Exception as e:
+                  # NOTE: this is a bad handler. if we're setup for retries and there's
+                  #       a simple bug in here, this could be retried a bunch. really,
+                  #       this block just needs to catch things that systematic problems
+                  #       like a failure to get/put files in S3 (e.g. due to connection
+                  #       errors) and things that are non-systematic exceptions
+                  print(e)
+                  print(
+                      f"Something went wrong during get, transform, or put of CSV file."
+                  )
+                  raise e
+      Handler: csv_xform_lambda_handler
+      Role: !GetAtt CAPEBSLambdaXformExecutionRole.Arn
+      Runtime: python3.9
+      Timeout: 120
 
 #Outputs:
    # [TBD] 
