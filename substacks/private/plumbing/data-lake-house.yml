@@ -346,5 +346,10 @@ Resources:
       Runtime: python3.9
       Timeout: 120
 
-#Outputs:
-   # [TBD] 
+Outputs:
+    CAPEBSDLHRawBucketNameOut: 
+      Description: The name of the DLH bucket raw data will go into
+      Export: !Ref CAPEBSRawBucketName
+    CAPEBSDLHCuratedBucketNameOut: 
+      Description: The name of the DLH bucket transformed data will go into
+      Export: !Ref CAPEBSCuratedBucketName
