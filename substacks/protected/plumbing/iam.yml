@@ -42,13 +42,16 @@ Resources:
         PasswordResetRequired: True
       #ManagedPolicyArns: 
       #  - [TBD]
-      #Path: String
+      Path: "capebs-protected"
       #PermissionsBoundary: [TBD]
       #Policies: 
       #  - [TBD]
       #Tags: 
       #  - [TBD]
-      UserName: "cape_protected_partner"
+      UserName: !Join 
+        - "-"
+        - - !Ref "AWS::Region"
+          - "protected_partner"
 
 #Outputs:
    # [TBD] 
