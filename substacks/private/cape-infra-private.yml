@@ -38,6 +38,8 @@ Resources:
         - CAPABILITY_NAMED_IAM
       #ChangeSetId: String
       #CreationTime: String
+      DependsOn:
+        - CAPEBSPrivateDLHStack
       Description: >
         The private IAM nested stack. Creates IAM users, roles, etc.
       #DisableRollback: Boolean
