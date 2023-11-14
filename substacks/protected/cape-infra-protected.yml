@@ -53,7 +53,7 @@ Resources:
       #RoleARN: [TBD]
       #RootId: String
       #StackId: String
-      StackName: "cape-babysteps-protected-iam-stack"
+      StackName: "capebs-protected-iam-stack"
       #StackPolicyBody: Json
       #StackPolicyURL: String
       #StackStatus: String

@@ -53,7 +53,7 @@ Resources:
       #RoleARN: [TBD]
       #RootId: String
       #StackId: String
-      StackName: "cape-babysteps-protected-stack"
+      StackName: "capebs-protected-stack"
       #StackPolicyBody: Json
       #StackPolicyURL: String
       #StackStatus: String
@@ -89,7 +89,7 @@ Resources:
       #RoleARN: [TBD]
       #RootId: String
       #StackId: String
-      StackName: "cape-babysteps-private-stack"
+      StackName: "capebs-private-stack"
       #StackPolicyBody: Json
       #StackPolicyURL: String
       #StackStatus: String
