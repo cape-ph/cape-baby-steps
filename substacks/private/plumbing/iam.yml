@@ -1,12 +1,6 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 
-# TODO:
-# - need to make sure these users can access the S3 buckets. need get on raw and
-#   curated, and put on raw only. this may require making the S3 buckets first
-#   and exporting the names as outputs from that stack so that we can use the 
-#   bucket names here via a reference...
-
 Description: >
    IAM stack template for the private substack. To start we have an admin (for
    CAPE, not for AWS) user and a regular user. This is to test access to various
