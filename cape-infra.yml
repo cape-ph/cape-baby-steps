@@ -1,6 +1,9 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 
+# TODO: 
+# - get cloudwatch wired up for logging deployment
+
 Description: >
    Top-level CloudFormation template for CAPE infrastructure baby-steps repo.
    This template and other nested sub-stack templates are used to deploy an 
