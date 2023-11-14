@@ -1,6 +1,12 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 
+# TODO:
+# - need to make sure these users can access the S3 buckets. need get on raw and
+#   curated, and put on raw only. this may require making the S3 buckets first
+#   and exporting the names as outputs from that stack so that we can use the 
+#   bucket names here via a reference...
+
 Description: >
    IAM stack template for the private substack. To start we have an admin (for
    CAPE, not for AWS) user and a regular user. This is to test access to various
@@ -29,30 +35,106 @@ Description: >
 #Transform:
    # [TBD] 
 
-Resources:
+Resource:
+  CAPEBSRawBucketGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      # IAM resources can have issues if the same template (and thus same
+      # resource names) are used in multiple regions. this join of region name
+      # to resource name is AWS's recommendation to mitigate
+      GroupName: !Join
+        - "_"
+        - - !Ref "AWS::Region"
+          - "raw-bucket-group"
+      # The ManagedPolicyArns key is only used if there are policies already
+      # defined we wish to name here. this may happen in a more operational
+      # setting where users have groups already defined (or will define them
+      # outside this CF deployment) that need to be used
+      #ManagedPolicyArns:
+      #  - String
+      Path: "capebs-private"
+      Policies:
+        - PolicyName: "capebs-raw-bucket-group-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+            - Effect: Allow
+              Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:ListObjects
+              Resource: !ImportValue "${CAPEBSDLHRawBucketNameOut}"
+            - Effect: Deny
+              Action:
+              - s3:*
+              NotResource: !ImportValue "${CAPEBSDLHRawBucketNameOut}"
+
+  CAPEBSCuratedBucketGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      # IAM resources can have issues if the same template (and thus same
+      # resource names) are used in multiple regions. this join of region name
+      # to resource name is AWS's recommendation to mitigate
+      GroupName: !Join
+        - "_"
+        - - !Ref "AWS::Region"
+          - "curated-bucket-group"
+      # The ManagedPolicyArns key is only used if there are policies already
+      # defined we wish to name here. this may happen in a more operational
+      # setting where users have groups already defined (or will define them
+      # outside this CF deployment) that need to be used
+      #ManagedPolicyArns:
+      #  - String
+      Path: "capebs-private"
+      Policies:
+        - PolicyName: "capebs-curated-bucket-group-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+            - Effect: Allow
+              Action:
+              - s3:GetObject
+              - s3:ListObjects
+              Resource: !ImportValue "${CAPEBSDLHCuratedBucketNameOut}"
+            - Effect: Deny
+              Action:
+              - s3:*
+              NotResource: !ImportValue "${CAPEBSDLHCuratedBucketNameOut}"
+
   CAPEBSPrivateAdminUser:
     Type: AWS::IAM::User
     Properties:
-      #Groups: 
-      #  - [TBD]
+      Groups: 
+        - "raw-bucket-group"
+        - "curated-bucket-group"
       LoginProfile: 
         Password: "b4dp4ssw0rd"
         PasswordResetRequired: True
       #ManagedPolicyArns: 
       #  - [TBD]
-      #Path: String
+      Path: "capebs-private"
       #PermissionsBoundary: [TBD]
+      # We may want to add a policy to write to the curated bucket just for
+      # funsies here. The admin should be able to do such things even though the
+      # lambda should really be the only one writing to the curated bucket.
       #Policies: 
       #  - [TBD]
       #Tags: 
       #  - [TBD]
-      UserName: "cape_private_admin"
+      # IAM resources can have issues if the same template (and thus same 
+      # resource names) are used in multiple regions. this join of region name 
+      # to resource name is AWS's recommendation to mitigate
+      UserName: !Join 
+        - "-"
+        - - !Ref "AWS::Region"
+          - "private_admin"
 
   CAPEBSPrivateRegularUser:
     Type: AWS::IAM::User
     Properties:
-      #Groups: 
-      #  - [TBD]
+      Groups: 
+        - "raw-bucket-group"
+        - "curated-bucket-group"
       LoginProfile: 
         # We need to get the passwords out and into a secret manager or 
         # something.
@@ -60,13 +142,19 @@ Resources:
         PasswordResetRequired: True
       #ManagedPolicyArns: 
       #  - [TBD]
-      #Path: String
+      Path: "capebs-private"
       #PermissionsBoundary: [TBD]
       #Policies: 
       #  - [TBD]
       #Tags: 
       #  - [TBD]
-      UserName: "cape_private_unpriv"
+      # IAM resources can have issues if the same template (and thus same 
+      # resource names) are used in multiple regions. this join of region name 
+      # to resource name is AWS's recommendation to mitigate
+      UserName: !Join 
+        - "-"
+        - - !Ref "AWS::Region"
+          - "private_unpriv"
 
 #Outputs:
    # [TBD] 
