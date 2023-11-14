@@ -3,13 +3,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 # TODO:
 # - get reused items parameterized (e.g bucket names, etc)
-# - setup simple labmda to handle the csv xform (be sure to handle exceptions
-#   like file not being valid, etc). exception handling in AWS isn't super
-#   straight forward (if the csv was misformed, the lambda should just exit
-#   logging the issue, but if the getting/putting of the raaw/transformed csv
-#   fails, the lambda should be retried somehow and these are handled
-#   differently). For this excercise, we may just want to log errors for bad raw
-#   format.
 
 Description: >
    Data lakehouse stack template for the private substack. To start we have only
@@ -225,7 +218,7 @@ Resources:
         #      Action:
         #      - logs:*
         #      Resource: arn:aws:logs:*:*:*
-        - PolicyName: getRawObjects
+        - PolicyName: "capebs-xfrom-lambda-raw-bucket-policy"
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -234,7 +227,7 @@ Resources:
               - s3:GetObject
               Resource:  !Sub 'arn:aws:s3:::${CAPEBSRawBucketName}/*'
 
-        - PolicyName: putRawObjects
+        - PolicyName: "capebs-xfrom-lambda-curated-bucket-policy"
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
