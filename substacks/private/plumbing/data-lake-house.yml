@@ -218,7 +218,7 @@ Resources:
         #      Action:
         #      - logs:*
         #      Resource: arn:aws:logs:*:*:*
-        - PolicyName: "capebs-xfrom-lambda-raw-bucket-policy"
+        - PolicyName: "capebs-xform-lambda-raw-bucket-policy"
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -227,7 +227,7 @@ Resources:
               - s3:GetObject
               Resource:  !Sub 'arn:aws:s3:::${CAPEBSRawBucketName}/*'
 
-        - PolicyName: "capebs-xfrom-lambda-curated-bucket-policy"
+        - PolicyName: "capebs-xform-lambda-curated-bucket-policy"
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
