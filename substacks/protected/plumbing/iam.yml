@@ -49,9 +49,9 @@ Resources:
       #Tags: 
       #  - [TBD]
       UserName: !Join 
-        - "-"
+        - "_"
         - - !Ref "AWS::Region"
-          - "protected_partner"
+          - "protected-partner"
 
 #Outputs:
    # [TBD] 
