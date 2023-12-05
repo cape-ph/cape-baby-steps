@@ -12,3 +12,7 @@ development process type stuff for this project. At time of writing, **none of
 this has been agreed to.** Once it is we should codify it in that file (or 
 another place that is not specific to a particular repo) and then point to it 
 where necessary.
+
+The file [baby-steps-costs.md](baby-steps-costs.md) contains an estimated cost 
+breakdown. Currently this holds the phase 1 numbers. As things change, this 
+should be updated, or a better method of tracking should be considered.
