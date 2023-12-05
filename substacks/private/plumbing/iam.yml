@@ -39,7 +39,7 @@ Resource:
       GroupName: !Join
         - "_"
         - - !Ref "AWS::Region"
-          - "raw-bucket-group"
+          - "capebs-raw-bucket-group"
       # The ManagedPolicyArns key is only used if there are policies already
       # defined we wish to name here. this may happen in a more operational
       # setting where users have groups already defined (or will define them
@@ -72,7 +72,7 @@ Resource:
       GroupName: !Join
         - "_"
         - - !Ref "AWS::Region"
-          - "curated-bucket-group"
+          - "capebs-curated-bucket-group"
       # The ManagedPolicyArns key is only used if there are policies already
       # defined we wish to name here. this may happen in a more operational
       # setting where users have groups already defined (or will define them
@@ -119,9 +119,9 @@ Resource:
       # resource names) are used in multiple regions. this join of region name 
       # to resource name is AWS's recommendation to mitigate
       UserName: !Join 
-        - "-"
+        - "_"
         - - !Ref "AWS::Region"
-          - "private_admin"
+          - "private-admin"
 
   CAPEBSPrivateRegularUser:
     Type: AWS::IAM::User
@@ -146,9 +146,9 @@ Resource:
       # resource names) are used in multiple regions. this join of region name 
       # to resource name is AWS's recommendation to mitigate
       UserName: !Join 
-        - "-"
+        - "_"
         - - !Ref "AWS::Region"
-          - "private_unpriv"
+          - "private-unpriv"
 
 #Outputs:
    # [TBD] 
