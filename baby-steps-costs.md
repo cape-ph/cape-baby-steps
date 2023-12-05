@@ -4,6 +4,12 @@
 
 This section is specific to phase 1 of the bab-steps rollout.
 
+### TODO
+* We should consider getting [CloudTrail](https://aws.amazon.com/cloudtrail/) 
+  going from the beginning (meaning add it to phase 1). This will incur more 
+  cost, but logging will be critical to all CAPE deployments and usage, so we 
+  need to get familiar.
+
 ### Stack Hierarchy
 
 Below is the breakdown of the stack and nested stacks. Each item prefixed with 
