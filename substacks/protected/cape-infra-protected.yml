@@ -29,7 +29,7 @@ Description: >
    # [TBD] 
 
 Resources:
-  CAPEBSProtectedStack:
+  CAPEBSProtectedIAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Capabilities:
