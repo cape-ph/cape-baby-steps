@@ -2,38 +2,38 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >
-   Private nested stack CloudFormation template. This is included in the 
-   root cape-infra.yml root stack. 
-   This template and other nested sub-stack templates are used to deploy an 
-   example architecture to get some experience with these things under our 
-   belts. In all templates, things we do not know yet that need to be filled in
-   eventually are noted with `[TBD]`. Items that are commented out are either 
-   not known or not needed. These will be cleaned up as we go.
+  Private nested stack CloudFormation template. This is included in the 
+  root cape-infra.yml root stack. 
+  This template and other nested sub-stack templates are used to deploy an 
+  example architecture to get some experience with these things under our 
+  belts. In all templates, things we do not know yet that need to be filled in
+  eventually are noted with `[TBD]`. Items that are commented out are either 
+  not known or not needed. These will be cleaned up as we go.
 
 #Metadata:
-   # [TBD] 
- 
+# [TBD]
+
 #Parameters:
-   # [TBD] 
+# [TBD]
 
 #Rules:
-   # [TBD] 
+# [TBD]
 
 #Mappings:
-   # [TBD] 
+# [TBD]
 
 #Conditions:
-   # [TBD] 
+# [TBD]
 
 #Transform:
-   # [TBD] 
+# [TBD]
 
 Resources:
   CAPEBSPrivateIAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Capabilities:
-        # this stack creates a protected named user and this capability is 
+        # this stack creates a protected named user and this capability is
         # required
         - CAPABILITY_NAMED_IAM
       #ChangeSetId: String
@@ -45,11 +45,11 @@ Resources:
       #DisableRollback: Boolean
       EnableTerminationProtection: True
       #LastUpdateTime: String
-      #NotificationARNs: 
+      #NotificationARNs:
       #  - String
-      #Outputs: 
+      #Outputs:
       #  - Output
-      #Parameters: 
+      #Parameters:
       #  Key: [TBD]
       #ParentId: String
       #RoleARN: [TBD]
@@ -60,7 +60,7 @@ Resources:
       #StackPolicyURL: String
       #StackStatus: String
       #StackStatusReason: String
-      #Tags: 
+      #Tags:
       #  - [TBD]
       #TemplateBody: Json
       TemplateURL: plumbing/iam.yml
@@ -69,7 +69,7 @@ Resources:
   CAPEBSPrivateDLHStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-        #Capabilities:
+      #Capabilities:
       #ChangeSetId: String
       #CreationTime: String
       Description: >
@@ -78,11 +78,11 @@ Resources:
       #DisableRollback: Boolean
       EnableTerminationProtection: True
       #LastUpdateTime: String
-      #NotificationARNs: 
+      #NotificationARNs:
       #  - String
-      #Outputs: 
+      #Outputs:
       #  - Output
-      #Parameters: 
+      #Parameters:
       #  Key: [TBD]
       #ParentId: String
       #RoleARN: [TBD]
@@ -93,7 +93,7 @@ Resources:
       #StackPolicyURL: String
       #StackStatus: String
       #StackStatusReason: String
-      #Tags: 
+      #Tags:
       #  - [TBD]
       #TemplateBody: Json
       TemplateURL: plumbing/data-lake-house.yml
@@ -108,8 +108,7 @@ Resources:
       #InstanceTenancy: String
       #Ipv4IpamPoolId: String
       #Ipv4NetmaskLength: Integer
-      #Tags: 
+      #Tags:
       #  - [TBD]
-
 #Outputs:
-   # [TBD] 
+# [TBD]

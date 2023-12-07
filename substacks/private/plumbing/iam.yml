@@ -2,34 +2,34 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >
-   IAM stack template for the private substack. To start we have an admin (for
-   CAPE, not for AWS) user and a regular user. This is to test access to various
-   private phase 1 baby step resources.
-   This template and other nested sub-stack templates are used to deploy an 
-   example architecture to get some experience with these things under our 
-   belts. In all templates, things we do not know yet that need to be filled in
-   eventually are noted with `[TBD]`. Items that are commented out are either 
-   not known or not needed. These will be cleaned up as we go.
+  IAM stack template for the private substack. To start we have an admin (for
+  CAPE, not for AWS) user and a regular user. This is to test access to various
+  private phase 1 baby step resources.
+  This template and other nested sub-stack templates are used to deploy an 
+  example architecture to get some experience with these things under our 
+  belts. In all templates, things we do not know yet that need to be filled in
+  eventually are noted with `[TBD]`. Items that are commented out are either 
+  not known or not needed. These will be cleaned up as we go.
 
 #Metadata:
-   # [TBD] 
- 
+# [TBD]
+
 #Parameters:
-   # [TBD] 
+# [TBD]
 
 #Rules:
-   # [TBD] 
+# [TBD]
 
 #Mappings:
-   # [TBD] 
+# [TBD]
 
 #Conditions:
-   # [TBD] 
+# [TBD]
 
 #Transform:
-   # [TBD] 
+# [TBD]
 
-Resource:
+Resources:
   CAPEBSRawBucketGroup:
     Type: AWS::IAM::Group
     Properties:
@@ -46,22 +46,22 @@ Resource:
       # outside this CF deployment) that need to be used
       #ManagedPolicyArns:
       #  - String
-      Path: "capebs-private"
+      Path: "/capebs-private/"
       Policies:
         - PolicyName: "capebs-raw-bucket-group-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-            - Effect: Allow
-              Action:
-              - s3:GetObject
-              - s3:PutObject
-              - s3:ListObjects
-              Resource: !ImportValue "${CAPEBSDLHRawBucketNameOut}"
-            - Effect: Deny
-              Action:
-              - s3:*
-              NotResource: !ImportValue "${CAPEBSDLHRawBucketNameOut}"
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListObjects
+                Resource: !ImportValue "${CAPEBSDLHRawBucketNameOut}"
+              - Effect: Deny
+                Action:
+                  - s3:*
+                NotResource: !ImportValue "${CAPEBSDLHRawBucketNameOut}"
 
   CAPEBSCuratedBucketGroup:
     Type: AWS::IAM::Group
@@ -79,46 +79,46 @@ Resource:
       # outside this CF deployment) that need to be used
       #ManagedPolicyArns:
       #  - String
-      Path: "capebs-private"
+      Path: "/capebs-private/"
       Policies:
         - PolicyName: "capebs-curated-bucket-group-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-            - Effect: Allow
-              Action:
-              - s3:GetObject
-              - s3:ListObjects
-              Resource: !ImportValue "${CAPEBSDLHCuratedBucketNameOut}"
-            - Effect: Deny
-              Action:
-              - s3:*
-              NotResource: !ImportValue "${CAPEBSDLHCuratedBucketNameOut}"
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListObjects
+                Resource: !ImportValue "${CAPEBSDLHCuratedBucketNameOut}"
+              - Effect: Deny
+                Action:
+                  - s3:*
+                NotResource: !ImportValue "${CAPEBSDLHCuratedBucketNameOut}"
 
   CAPEBSPrivateAdminUser:
     Type: AWS::IAM::User
     Properties:
-      Groups: 
+      Groups:
         - "raw-bucket-group"
         - "curated-bucket-group"
-      LoginProfile: 
+      LoginProfile:
         Password: "b4dp4ssw0rd"
         PasswordResetRequired: True
-      #ManagedPolicyArns: 
+      #ManagedPolicyArns:
       #  - [TBD]
-      Path: "capebs-private"
+      Path: "/capebs-private/"
       #PermissionsBoundary: [TBD]
       # We may want to add a policy to write to the curated bucket just for
       # funsies here. The admin should be able to do such things even though the
       # lambda should really be the only one writing to the curated bucket.
-      #Policies: 
+      #Policies:
       #  - [TBD]
-      #Tags: 
+      #Tags:
       #  - [TBD]
-      # IAM resources can have issues if the same template (and thus same 
-      # resource names) are used in multiple regions. this join of region name 
+      # IAM resources can have issues if the same template (and thus same
+      # resource names) are used in multiple regions. this join of region name
       # to resource name is AWS's recommendation to mitigate
-      UserName: !Join 
+      UserName: !Join
         - "_"
         - - !Ref "AWS::Region"
           - "private-admin"
@@ -126,29 +126,28 @@ Resource:
   CAPEBSPrivateRegularUser:
     Type: AWS::IAM::User
     Properties:
-      Groups: 
+      Groups:
         - "raw-bucket-group"
         - "curated-bucket-group"
-      LoginProfile: 
-        # We need to get the passwords out and into a secret manager or 
+      LoginProfile:
+        # We need to get the passwords out and into a secret manager or
         # something.
         Password: "b4dp4ssw0rd"
         PasswordResetRequired: True
-      #ManagedPolicyArns: 
+      #ManagedPolicyArns:
       #  - [TBD]
-      Path: "capebs-private"
+      Path: "/capebs-private/"
       #PermissionsBoundary: [TBD]
-      #Policies: 
+      #Policies:
       #  - [TBD]
-      #Tags: 
+      #Tags:
       #  - [TBD]
-      # IAM resources can have issues if the same template (and thus same 
-      # resource names) are used in multiple regions. this join of region name 
+      # IAM resources can have issues if the same template (and thus same
+      # resource names) are used in multiple regions. this join of region name
       # to resource name is AWS's recommendation to mitigate
-      UserName: !Join 
+      UserName: !Join
         - "_"
         - - !Ref "AWS::Region"
           - "private-unpriv"
-
 #Outputs:
-   # [TBD] 
+# [TBD]
