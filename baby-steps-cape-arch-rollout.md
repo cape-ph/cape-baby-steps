@@ -75,6 +75,8 @@ includes things such as:
       to be very careful)
     * __MORE TBD__
 
+This also gives us an opportunity to dog food our own IaC stuff.
+
 ### Baby - "Hello-World" Phase 1
 
 This phase would be to get the ball rolling, and will focus on minimal items to 
