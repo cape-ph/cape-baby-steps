@@ -19,6 +19,62 @@ are intended to be brought into phases as things become clearer.
 
 ## Roll Out Phases
 
+### Move Along...Nothin to Sayan Here - "Infra^2" Phase 0
+
+Before we can do anything deployment related, we need to get an environment 
+together to do repeatable deployments and house deployment related data. This is
+conceptual at present (section will be updated as it is fleshed out) but 
+includes things such as:
+
+* an EC2 instance to do deployments from
+  * early in the process, we may be able to get along with deploying from the
+    machines of the memebers of the infra team. in fact for phase 0's initial 
+    deployment we will have to deploy from somewhere that is not the infra^2 
+    infrastructure. but as we progress this will get complicated.
+    * infra team would need to manually keep their machines in sync as to 
+      versions of the IaC tools and ensure there are no ancillary items (e.g. 
+      OS packages) that could cause IaC tools to run differently on each machine
+    * development machines are very dirty places. many projects' tools exist in
+      the same place and if devs are not careful can conflict with each other 
+      (e.g. global npm or python environments). a deployment machine gives us
+      a clean and predictable environment
+    * if we ever want to get to automation of deployments, we will need an 
+      environment to kick those off in. that is this instance
+    * __MORE TBD__
+* a container registry for AMIs related to deployments (maybe including the 
+  AMI for the deployment EC2 instance)
+    * we need a place to manage artifacts to be deployed in some cases. e.g. if
+      we have container or machine images that are part of the deployment, but 
+      are not really something needed outside of deployment scenarios, we need 
+      infra to store those. we could perhaps start with a container/image 
+      registry on github, but that may eventually prove problematic due to size 
+      (and this may only work for containe images, not AMIs)
+    * __MORE TBD__
+* buckets for deployment data like logs and configs
+    * the artifacts of deployments need somewhere to be put that is accesible 
+      by all team members
+    * __MORE TBD__
+* a secret store
+    * we need to manage whatever cert pairs are needed (these may not go in the
+      same store as passwords and the like, but this gets the point across)
+    * infra team members would otherwise need to manage deployment secrets 
+      themselves (passwords, cert pairs, etc). we do not want to run the risk 
+      of any of those ending up in a repo for sure
+    * __MORE TBD__
+* all wrapped in a vpc or other network segregation
+    * We ant this segregated from all other CAPE stuff for a number of reasons
+      (e.g. cape users should not be able to get to this, cape data to be 
+      processed should never end up here, etc)
+    * __MORE TBD__
+* future additions (unknown unknowns)
+    * this will give us a place to add new things as needed. e.g. if we need 
+      additional tooling not yet considered, we can tack that on to the 
+      deployment environment (obviously assuming it has to do with the 
+      deployment use case). e.g. if we need our own runners for github ci/cd, 
+      we could expose them from here (though for something like that we'd need 
+      to be very careful)
+    * __MORE TBD__
+
 ### Baby - "Hello-World" Phase 1
 
 This phase would be to get the ball rolling, and will focus on minimal items to 
