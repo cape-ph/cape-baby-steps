@@ -139,7 +139,7 @@ raw_bucket = s3.Bucket(
                         ]
                     )
                 ),
-            )
+            ),
         ]
     ),
 )

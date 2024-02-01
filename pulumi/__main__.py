@@ -2,8 +2,9 @@
 
 from pulumi import export
 
-import private.datalakehouse as datalakehouse
+import protected
+import private
 
-# use something in datalakehouse so linter is happy
-export("raw_bucket_name", datalakehouse.raw_bucket.id)
-export("curated_bucket_name", datalakehouse.curated_bucket.id)
+export("protected_user", protected.protected_user.user_name)
+export("private_user", private.private_user.user_name)
+export("private_admin", private.private_admin.user_name)
