@@ -1,0 +1,10 @@
+name: cape
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Center for Applied Pathogen Epidemiology and Outbreak Control
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: ""
