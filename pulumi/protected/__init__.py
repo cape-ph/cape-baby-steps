@@ -1,15 +1,15 @@
 """Protected Scoped Infrastructure"""
 
-from pulumi_aws_native import iam, get_region
+import pulumi_aws_native as aws
 
-region = get_region()
+region = aws.get_region()
 path = "capebs-protected"
 
-protected_user = iam.User(
+protected_user = aws.iam.User(
     "protected_user",
     path=path,
-    login_profile=iam.UserLoginProfileArgs(
+    login_profile=aws.iam.UserLoginProfileArgs(
         password="b4dp4ssw0rd", password_reset_required=True
     ),
-    usename=f"{region}_protected",
+    user_name=f"{region}_protected",
 )
