@@ -5,18 +5,18 @@ AWSTemplateFormatVersion: "2010-09-09"
 # - get reused items parameterized (e.g bucket names, etc)
 
 Description: >
-   Data lakehouse stack template for the private substack. To start we have only
-   2 S3 buckets (raw and curated). This will eventually grow to contain more
-   buckets, metastore, etc.
-   This template and other nested sub-stack templates are used to deploy an 
-   example architecture to get some experience with these things under our 
-   belts. In all templates, things we do not know yet that need to be filled in
-   eventually are noted with `[TBD]`. Items that are commented out are either 
-   not known or not needed. These will be cleaned up as we go.
+  Data lakehouse stack template for the private substack. To start we have only
+  2 S3 buckets (raw and curated). This will eventually grow to contain more
+  buckets, metastore, etc.
+  This template and other nested sub-stack templates are used to deploy an 
+  example architecture to get some experience with these things under our 
+  belts. In all templates, things we do not know yet that need to be filled in
+  eventually are noted with `[TBD]`. Items that are commented out are either 
+  not known or not needed. These will be cleaned up as we go.
 
 #Metadata:
-   # [TBD] 
- 
+# [TBD]
+
 Parameters:
   CAPEBSRawBucketName:
     Type: String
@@ -29,16 +29,16 @@ Parameters:
     Description: Name for the curated bucket for CSV upload
 
 #Rules:
-   # [TBD] 
+# [TBD]
 
 #Mappings:
-   # [TBD] 
+# [TBD]
 
 #Conditions:
-   # [TBD] 
+# [TBD]
 
 #Transform:
-   # [TBD] 
+# [TBD]
 
 Resources:
   CAPEBSPrivateDLRawS3:
@@ -49,26 +49,26 @@ Resources:
       - CAPEBSLambdaXformPermission
     Properties:
       #AccelerateConfiguration:  AccelerateConfiguration
-      # AWS docs state access control is legacy and should not be used. see 
+      # AWS docs state access control is legacy and should not be used. see
       # https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html
       # for more modern ways to do this
       #AccessControl: String
-      #AnalyticsConfigurations: 
+      #AnalyticsConfigurations:
       #  - AnalyticsConfiguration
       # We will probably want encryption on everything unless that messes with
-      # any DLH (data lake house) queries or other parts of the system we 
+      # any DLH (data lake house) queries or other parts of the system we
       # envision.
       #BucketEncryption: BucketEncryption
       BucketName: !Ref CAPEBSRawBucketName
-      # We will probably not want CORS for our DLH buckets. Since this is all 
+      # We will probably not want CORS for our DLH buckets. Since this is all
       # private, everything should be same origin i would think.
       #CorsConfiguration: CorsConfiguration
       # We may want intelligent tiering long term (again, unless that messes
-      # with queries/other functions *or* if customer does not want to pay for 
+      # with queries/other functions *or* if customer does not want to pay for
       # it and rather handle it themselves)
-      #IntelligentTieringConfigurations: 
+      #IntelligentTieringConfigurations:
       #  - [TBD]
-      #InventoryConfigurations: 
+      #InventoryConfigurations:
       #  - InventoryConfiguration
       # This goes hand in hand with (and also independently of WRT expiration)
       # IntelliigentTiering. May or may not want here
@@ -77,41 +77,41 @@ Resources:
       # to check with GDPH and see what they do currently. It seems like having
       # a centralized location for all logs would be a good idea?
       #LoggingConfiguration: [TBD]
-      #MetricsConfigurations: 
+      #MetricsConfigurations:
       #  - MetricsConfiguration
       # This handles the triggering of the lambda on CSV upload to the raw
       # bucket
       NotificationConfiguration:
         LambdaConfigurations:
           - Event: s3:ObjectCreated:*
-            Function: !GetAtt CAPEBSLambdaXformFunction
+            Function: !Ref CAPEBSLambdaXformFunction
             Filter:
               S3Key:
                 Rules:
-                - Name: suffix
-                  Value: .csv
+                  - Name: suffix
+                    Value: .csv
       # ObjectLock* may or may not be useful. If we have anything that cannot be
-      # modified once uploaded (indefinitely or for some period of time), then 
+      # modified once uploaded (indefinitely or for some period of time), then
       # it would be useful.
       #ObjectLockConfiguration: ObjectLockConfiguration
       #ObjectLockEnabled: Boolean
-      # Not sure how we want to handle this. Should the file writer be the 
-      # owner, or should it become the bucket owner after upload? Probably 
-      # bucket owner. In any event, we will need to figure out our access 
+      # Not sure how we want to handle this. Should the file writer be the
+      # owner, or should it become the bucket owner after upload? Probably
+      # bucket owner. In any event, we will need to figure out our access
       # controls for the bucket before worrying about this.
       #OwnershipControls: OwnershipControls
-      # We do not want any of these buckets to be public. So we need to make 
-      # sure the access control doesn't allow that. Not clear yet if these 
-      # settings are needed if the access control is correct for the bucket 
+      # We do not want any of these buckets to be public. So we need to make
+      # sure the access control doesn't allow that. Not clear yet if these
+      # settings are needed if the access control is correct for the bucket
       # already
       #PublicAccessBlockConfiguration: PublicAccessBlockConfiguration
       # Unsure if we will need to replicate any of our buckets...
       #ReplicationConfiguration: ReplicationConfiguration
-      #Tags: 
+      #Tags:
       #  - [TBD]
       # Pretty certain we want versioning on for all our buckets to allow files
       # to be updated. Def need to verify
-      VersioningConfiguration: 
+      VersioningConfiguration:
         Status: "Enabled"
       # This is used if the bucket is for a static website. Ours is not...
       #WebsiteConfiguration: WebsiteConfiguration
@@ -125,26 +125,26 @@ Resources:
       - CAPEBSLambdaXformPermission
     Properties:
       #AccelerateConfiguration:  AccelerateConfiguration
-      # AWS docs state access control is legacy and should not be used. see 
+      # AWS docs state access control is legacy and should not be used. see
       # https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html
       # for more modern ways to do this
       #AccessControl: String
-      #AnalyticsConfigurations: 
+      #AnalyticsConfigurations:
       #  - AnalyticsConfiguration
       # We will probably want encryption on everything unless that messes with
-      # any DLH (data lake house) queries or other parts of the system we 
+      # any DLH (data lake house) queries or other parts of the system we
       # envision.
       #BucketEncryption: BucketEncryption
       BucketName: !Ref CAPEBSCuratedBucketName
-      # We will probably not want CORS for our DLH buckets. Since this is all 
+      # We will probably not want CORS for our DLH buckets. Since this is all
       # private, everything should be same origin i would think.
       #CorsConfiguration: CorsConfiguration
       # We may want intelligent tiering long term (again, unless that messes
-      # with queries/other functions *or* if customer does not want to pay for 
+      # with queries/other functions *or* if customer does not want to pay for
       # it and rather handle it themselves)
-      #IntelligentTieringConfigurations: 
+      #IntelligentTieringConfigurations:
       #  - [TBD]
-      #InventoryConfigurations: 
+      #InventoryConfigurations:
       #  - InventoryConfiguration
       # This goes hand in hand with (and also independently of WRT expiration)
       # IntelliigentTiering. May or may not want here
@@ -153,33 +153,33 @@ Resources:
       # to check with GDPH and see what they do currently. It seems like having
       # a centralized location for all logs would be a good idea?
       #LoggingConfiguration: [TBD]
-      #MetricsConfigurations: 
+      #MetricsConfigurations:
       #  - MetricsConfiguration
-      # Not sure if we'll need notifications. Even if we do, maybe not for 
+      # Not sure if we'll need notifications. Even if we do, maybe not for
       # upload of raw data or on transforms leading to curated
       #NotificationConfiguration: NotificationConfiguration
       # ObjectLock* may or may not be useful. If we have anything that cannot be
-      # modified once uploaded (indefinitely or for some period of time), then 
+      # modified once uploaded (indefinitely or for some period of time), then
       # it would be useful.
       #ObjectLockConfiguration: ObjectLockConfiguration
       #ObjectLockEnabled: Boolean
-      # Not sure how we want to handle this. Should the file writer be the 
-      # owner, or should it become the bucket owner after upload? Probably 
-      # bucket owner. In any event, we will need to figure out our access 
+      # Not sure how we want to handle this. Should the file writer be the
+      # owner, or should it become the bucket owner after upload? Probably
+      # bucket owner. In any event, we will need to figure out our access
       # controls for the bucket before worrying about this.
       #OwnershipControls: OwnershipControls
-      # We do not want any of these buckets to be public. So we need to make 
-      # sure the access control doesn't allow that. Not clear yet if these 
-      # settings are needed if the access control is correct for the bucket 
+      # We do not want any of these buckets to be public. So we need to make
+      # sure the access control doesn't allow that. Not clear yet if these
+      # settings are needed if the access control is correct for the bucket
       # already
       #PublicAccessBlockConfiguration: PublicAccessBlockConfiguration
       # Unsure if we will need to replicate any of our buckets...
       #ReplicationConfiguration: ReplicationConfiguration
-      #Tags: 
+      #Tags:
       #  - [TBD]
       # Pretty certain we want versioning on for all our buckets to allow files
       # to be updated. Def need to verify
-      VersioningConfiguration: 
+      VersioningConfiguration:
         Status: "Enabled"
       # This is used if the bucket is for a static website. Ours is not...
       #WebsiteConfiguration: WebsiteConfiguration
@@ -188,10 +188,10 @@ Resources:
   CAPEBSLambdaXformPermission:
     Type: AWS::Lambda::Permission
     Properties:
-      Action: 'lambda:InvokeFunction'
+      Action: "lambda:InvokeFunction"
       FunctionName: !Ref CAPEBSLambdaXformFunction
       Principal: s3.amazonaws.com
-      SourceArn: !Sub 'arn:aws:s3:::${CAPEBSRawBucketName}'
+      SourceArn: !Sub "arn:aws:s3:::${CAPEBSRawBucketName}"
       SourceAccount: !Ref AWS::AccountId
 
   # Role for the Lambda. Allows read of objects in the raw bucket and putting
@@ -200,14 +200,14 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-          Action:
-          - sts:AssumeRole
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
       Policies:
         # we'll probably want logging setup at some point, here's an example
         #- PolicyName: allowLogging
@@ -220,32 +220,32 @@ Resources:
         #      Resource: arn:aws:logs:*:*:*
         - PolicyName: "capebs-xform-lambda-raw-bucket-policy"
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
-            - Effect: Allow
-              Action:
-              - s3:GetObject
-              Resource:  !Sub 'arn:aws:s3:::${CAPEBSRawBucketName}/*'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub "arn:aws:s3:::${CAPEBSRawBucketName}/*"
 
         - PolicyName: "capebs-xform-lambda-curated-bucket-policy"
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
-            - Effect: Allow
-              Action:
-              - s3:PutObject
-              Resource:  !Sub 'arn:aws:s3:::${CAPEBSCuratedBucketName}/*'
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub "arn:aws:s3:::${CAPEBSCuratedBucketName}/*"
 
   CAPEBSLambdaXformFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-          # NOTE: doing this lambda as inline python. for this trivial example
-          #       that's fine, but we should really get into making repos for
-          #       these things. if not doing inline, `Code` will get handed a
-          #       URL for a zip file deployment (or a container image) of the
-          #       lambda and we can get all CI/CD up in the repos to make the
-          #       zips (like releases)
+        # NOTE: doing this lambda as inline python. for this trivial example
+        #       that's fine, but we should really get into making repos for
+        #       these things. if not doing inline, `Code` will get handed a
+        #       URL for a zip file deployment (or a container image) of the
+        #       lambda and we can get all CI/CD up in the repos to make the
+        #       zips (like releases)
         ZipFile: >
           import csv
           import io
@@ -340,9 +340,9 @@ Resources:
       Timeout: 120
 
 Outputs:
-    CAPEBSDLHRawBucketNameOut: 
-      Description: The name of the DLH bucket raw data will go into
-      Export: !Ref CAPEBSRawBucketName
-    CAPEBSDLHCuratedBucketNameOut: 
-      Description: The name of the DLH bucket transformed data will go into
-      Export: !Ref CAPEBSCuratedBucketName
+  CAPEBSDLHRawBucketNameOut:
+    Description: The name of the DLH bucket raw data will go into
+    Value: !Ref CAPEBSRawBucketName
+  CAPEBSDLHCuratedBucketNameOut:
+    Description: The name of the DLH bucket transformed data will go into
+    Value: !Ref CAPEBSCuratedBucketName
