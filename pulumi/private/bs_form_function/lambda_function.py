@@ -1,7 +1,8 @@
 import csv
 import io
-import urllib.parse
 import re
+import urllib.parse
+
 import boto3
 
 s3 = boto3.resource("s3")
@@ -68,7 +69,7 @@ def csv_xform_handler(event, context):
                 csvwriter.writerow(row)
 
             s3.put_object(
-                Body=xformed_obj_file.get_value(),
+                Body=xformed_obj_file.getvalue(),
                 Bucket=curated_bucket,
                 Key=f"transformed-{key}",
             )
@@ -80,5 +81,5 @@ def csv_xform_handler(event, context):
         #       like a failure to get/put files in S3 (e.g. due to connection
         #       errors) and things that are non-systematic exceptions
         print(e)
-        print(f"Something went wrong during get, transform, or put of CSV file.")
+        print("Something went wrong during get, transform, or put of CSV file.")
         raise e

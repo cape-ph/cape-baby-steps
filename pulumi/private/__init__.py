@@ -1,8 +1,8 @@
 """Private Scoped Infrastructure"""
 
-from pulumi import Output
-import pulumi_aws_native as aws
 import datalakehouse
+import pulumi_aws_native as aws
+from pulumi import Output
 
 region = aws.get_region()
 path = "capbs-private"

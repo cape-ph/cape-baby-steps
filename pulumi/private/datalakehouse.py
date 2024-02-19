@@ -1,8 +1,9 @@
 """An AWS Python Pulumi program"""
 
 import os
-from pulumi import Output
+
 import pulumi_aws_native as aws
+from pulumi import Output
 
 account_id = aws.get_account_id().account_id
 
