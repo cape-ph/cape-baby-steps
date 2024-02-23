@@ -7,6 +7,15 @@ from pulumi import Output
 region = aws.get_region()
 path = "capbs-private"
 
+vpc = aws.ec2.Vpc(
+    "capebs_private_vpc",
+    args=aws.ec2.VpcArgs(
+        cidr_block="10.0.0.0/24",
+        enable_dns_hostnames=True,
+        enable_dns_support=True,
+    ),
+)
+
 raw_bucket_group = aws.iam.Group(
     "raw_bucket_group",
     group_name=f"{region}_capbs_raw_bucket_group",
